@@ -4,6 +4,7 @@ namespace A17\TwillTransformers;
 
 use App\Support\Templates;
 use A17\Twill\Models\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use A17\TwillTransformers\Behaviours\HasConfig;
 use A17\TwillTransformers\Exceptions\Repository;
@@ -53,8 +54,6 @@ trait RepositoryTrait
      */
     public function getTemplateName(...$objects)
     {
-        $objects[] = $this;
-
         return collect($objects)->reduce(
             fn($name, $object) => $name ??
                 $this->getTemplateNameFromObject($object),
@@ -96,14 +95,14 @@ trait RepositoryTrait
 
         if (blank($templateName)) {
             try {
-                $templateName = $object['templateName'];
+                $templateName = Arr::exists($object, 'templateName') ?? $object['templateName'];
             } catch (\Throwable $exception) {
             }
         }
 
         if (blank($templateName)) {
             try {
-                $templateName = $object['template_name'];
+                $templateName = Arr::exists($object, 'template_name') ?? $object['template_name'];
             } catch (\Throwable $exception) {
             }
         }
